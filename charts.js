@@ -944,6 +944,7 @@ async function interactablePlot(input ,index) {
         width = 700;
 
     // Initialize data variable from csv from github
+    // link = "https://yh12chang.github.io/" + input.Country_code + "Data.csv"
     link = "https://yh12chang.github.io/" + input.Country_code + "Data.csv"
     data = await d3.csv(link);
 
