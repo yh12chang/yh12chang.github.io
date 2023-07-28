@@ -963,6 +963,8 @@ async function interactablePlot(input ,index) {
         cum_deaths.push(parseFloat(d.Cumulative_deaths))
     });
 
+    console.log(parseFloat(d3.max(new_deaths)))
+
     // Get the max new cases per day
     new_max = parseFloat(d3.max(new_cases))
 
@@ -1047,6 +1049,8 @@ async function interactablePlot(input ,index) {
 
     // Max Cumulative cases value for axis reference
     death_max = parseFloat(d3.max(new_deaths))
+
+    console.log(death_max)
 
     // Right DEATHS Y axis linearly scale barplots
     const y_death = d3.scaleLinear().domain([0, death_max + death_max*0.2]).range([height - margin/2, 0])
