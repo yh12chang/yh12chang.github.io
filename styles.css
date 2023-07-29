@@ -29,7 +29,11 @@ body {
 
 #description-note {
     font-style: italic;
-    color: red;
+    color: rgb(255, 22, 22);
+}
+
+#description {
+    color: rgb(44, 44, 44);
 }
 
 
@@ -119,6 +123,40 @@ body {
 } */
 
 
+.axis-parameter input{
+    margin-left: 4em;
+    margin-right: 4em;
+    margin-bottom: 1em;
+}
+
+
+.axis-parameter button{
+    
+    height: 20px;
+    width: 50px;
+    font-size: 9;
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+    background-color: rgb(36, 53, 72);
+    border-color: rgba(128, 128, 128, 0);
+    border-radius: 15px;
+    /* box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.736); */
+    box-shadow: 0 5px #999;
+}
+
+.axis-parameter button:hover {
+    transition: all .2s ease;
+    background-color: rgb(207, 207, 207);
+    color: #1c1c1c;
+}
+
+.axis-parameter button:active {
+    transition: all .1s ease;
+    background-color: rgb(136, 136, 136);
+    color: #1c1c1c;
+    box-shadow: 0 3px #666;
+    transform: translateY(4px);
+}
 
 
 .footer {
@@ -143,6 +181,8 @@ body {
     background-color: #f7f7f7;
     margin: 0 auto;
     box-shadow: -2px 2px 10px 3px rgba(0, 0, 0, 0.223);
+    border-radius: 6px;
     /* color: rgb(255, 51, 51); */
 }
+
 

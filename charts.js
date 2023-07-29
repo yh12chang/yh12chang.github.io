@@ -3,26 +3,29 @@ var i = 0
 
 var interaction = false
 
+var interaction_country = ""
+
 // Function for First Scene
 async function scene1() {
-
-    d3.select("#description").remove()
-    d3.select("#description-note").remove()
-
-    d3.select(".description-container").append("p").attr("id", "description").text("In the early months of 2020, the world faced a global pandemic that would spread further than anyone could've imagined. The data visualization below is to help show when certain countries experienced the worst case of outbreak. To move through the narrative, click the 'Next' button.")
-        .style("opacity", 0)
-        .transition().duration(500)
-        .style("opacity", 1)
-    
-    d3.select(".description-container").append("p").attr("id", "description-note").text("* At any point, if you would like to restart the walk-through click the 'Restart' button.")
-        .style("opacity", 0)
-        .transition().duration(500)
-        .style("opacity", 1)
 
     d3.select("#graph").html("")
 
     if (interaction == true) {
         d3.select(".visualization").append("svg").attr("id", "map").attr("height", 0)
+
+        d3.select("#description").remove()
+        d3.select("#description-note").remove()
+
+        d3.select(".description-container").append("p").attr("id", "description").text("In the early months of 2020, the world faced a global pandemic that would spread further than anyone could've imagined. The data visualization below is to help show when certain countries experienced the worst case of outbreak. To move through the narrative, click the 'Next' button.")
+            .style("opacity", 0)
+            .transition().duration(500)
+            .style("opacity", 1)
+        
+        d3.select(".description-container").append("p").attr("id", "description-note").text("* At any point, if you would like to restart the walk-through click the 'Restart' button.")
+            .style("opacity", 0)
+            .transition().duration(500)
+            .style("opacity", 1)
+
         interaction = false
     }
 
@@ -447,13 +450,13 @@ async function scene2() {
         .append("g")
         .attr("transform", "translate(" +2*margin+ ", " +margin+ ")")
         
-    // var clip = svg.append("defs").append("clipPath")
-    //     .attr("id", "clip")
-    //     .append("rect")
-    //     .attr("width", width-2*margin)
-    //     .attr("height", height)
-    //     .attr("x", 0)
-    //     .attr("y", 0)
+    var clip = svg.append("defs").append("clipPath")
+        .attr("id", "clip")
+        .append("rect")
+        .attr("width", width-2*margin)
+        .attr("height", height)
+        .attr("x", 0)
+        .attr("y", 0)
 
     
 
@@ -943,13 +946,6 @@ function scene5() {
         .attr("dy", "14.5em")
         .text("the COVID-19 pandemic was effected the most.")
         .style("opacity", 0)
-
-    textSlide.append("text")
-        .attr("x", margin*4-20)
-        .attr("y", height*1/4)
-        .attr("dy", "24.5em")
-        .text("* Use the slider on the bar plot to look cloer into specific range of months")
-        .style("opacity", 0)
         
 
     d3.select("#closing-text")
@@ -986,7 +982,11 @@ async function interactablePlot(input ,index) {
 
     // Initialize data variable from csv from github
     // link = "https://yh12chang.github.io/" + input.Country_code + "Data.csv"
-    link = "https://yh12chang.github.io/" + input.Country_code + "Data.csv"
+
+    interaction_country = input.Country_code
+
+    link = "https://yh12chang.github.io/" + interaction_country + "Data.csv"
+
     data = await d3.csv(link);
 
     // Arrays to store the mapped data
@@ -1018,11 +1018,60 @@ async function interactablePlot(input ,index) {
         return new Date(d.Date_reported)
     })
     
+    console.log(d3.select("#start-date"))
+
+    if (d3.select("#start-date")._groups[0][0] == null && d3.select("#end-date")._groups[0][0] == null){
+        d3.select(".axis-parameter")
+            .append("button")
+            .attr("id", "reset-date")
+            .text("Reset")
+            .attr("onclick", "updateChartAxis(true)")
+            .style("opacity", 0)
+            .transition().duration(500)
+            .style("opacity", 1)
+
+        d3.select(".axis-parameter")
+            .append("input")
+            .attr("type", "text")
+            .attr("id", "start-date")
+            .attr("value", "1/3/2020")
+            .style("opacity", 0)
+            .transition().duration(500)
+            .style("opacity", 1)
+
+        d3.select(".axis-parameter")
+            .append("input")
+            .attr("type", "text")
+            .attr("id", "end-date")
+            .attr("value", "7/19/2023")
+            .style("opacity", 0)
+            .transition().duration(500)
+            .style("opacity", 1)
+
+        d3.select(".axis-parameter")
+            .append("button")
+            .attr("id", "submit-date")
+            .text("Submit")
+            .attr("onclick", "updateChartAxis(false)")
+            .style("opacity", 0)
+            .transition().duration(500)
+            .style("opacity", 1)
+    }
+    
+
+    var start_date = new Date(d3.select("#start-date").attr("value"));
+    
+    var end_date = new Date(d3.select("#end-date").attr("value"))
+
+    zoom_dates = [start_date, end_date]
+
+    num_data_points = (zoom_dates[1].getTime() - zoom_dates[0].getTime()) / (1000 * 3600 * 24)
+
     // X axis scaleTime
-    var x = d3.scaleTime().domain(dates).range([0, width - 2*margin])
+    var x = d3.scaleTime().domain(zoom_dates).range([0, width - 2*margin])
 
     // Horizontal Axis
-    var xAxis = d3.select("#graph")
+    d3.select("#graph")
         .append("g")
         .attr("class", "hor-axis")
         .attr("transform", "translate(" +(2*margin)+ ", " +(height + margin/2)+ ")")
@@ -1030,6 +1079,7 @@ async function interactablePlot(input ,index) {
         .duration(1000)
         .call(d3.axisBottom(x))
         .style("color", "rgb(29, 29, 29)");
+
     d3.select("#graph")
         .append("text")
         .attr("transform", "translate("+(margin + width/2)+", "+(height + margin*3/2)+")")
@@ -1091,8 +1141,6 @@ async function interactablePlot(input ,index) {
 
     // Max Cumulative cases value for axis reference
     death_max = parseFloat(d3.max(new_deaths))
-
-    console.log(death_max)
 
     // Right DEATHS Y axis linearly scale barplots
     const y_death = d3.scaleLinear().domain([0, death_max + death_max*0.2]).range([height - margin, 0])
@@ -1160,17 +1208,13 @@ async function interactablePlot(input ,index) {
         .attr("x", 0)
         .attr("y", 0)
 
-    var brush = d3.brush()
-        .extent( [0, 0], [width, height])
-        // .on("end", updateChart)
-
 
     // Add the path for clip boundary
     var bar = svg.append("g")
         .attr("clip-path", "url(#mask)")
 
     // Add the CASES barchart with animations
-    bar.attr("class", "case-plot")
+    bar.append("g").attr("class", "case-plot")
         .selectAll("rect").data(data).enter().append("rect")
         .attr("x", function(d, i) {
             return x(new Date(d.Date_reported))
@@ -1193,7 +1237,7 @@ async function interactablePlot(input ,index) {
         .style("fill", country_color[index]);
 
     // Add the DEATHS barchart with animations
-    bar.attr("class", "death-plot")
+    bar.append("g").attr("class", "death-plot")
         .selectAll().data(data).enter().append("rect")
         .attr("x", function(d, i) {
             return (x(new Date(d.Date_reported)) + (width + 2*margin)/(num_data_points*2))
@@ -1205,7 +1249,6 @@ async function interactablePlot(input ,index) {
         .transition()
         .duration(800)
         .delay(180)
-        .style("opacity", 0.3)
         .attr("y", function(d, i) {
             return y_death(d.New_deaths)
         })
@@ -1213,7 +1256,8 @@ async function interactablePlot(input ,index) {
         .attr("height", function(d,i) {
             return height - margin - y_death(d.New_deaths)
         })
-        .style("fill", "grey");
+        .style("fill", "black")
+        .style("opacity", 0.7)
 
     var canvas = document.createElement('canvas'),
         context = canvas.getContext('2d')
@@ -1268,6 +1312,76 @@ async function interactablePlot(input ,index) {
     
     d3.select(".visualization").append("svg").attr("id", "map").attr("height", 0)
 }
+
+
+
+
+
+
+
+async function updateChartAxis(reset) {
+
+    console.log("here")
+
+    // SVG parameters
+    var margin = 50,
+        height = 450,
+        width = 750;
+
+    if (reset == true) {
+        var start_date = new Date("1/3/20");
+        var end_date = new Date("7/19/23");
+
+        console.log("entered reset")
+
+        document.getElementById("start-date").value = "1/3/2020"
+        document.getElementById("end-date").value = "7/19/2023"
+    } else {
+        var start_date = new Date(document.getElementById("start-date").value);
+        var end_date = new Date(document.getElementById("end-date").value);
+    }
+    
+    
+
+    zoom_dates = [start_date, end_date]
+
+    num_data_points = (zoom_dates[1].getTime() - zoom_dates[0].getTime()) / (1000 * 3600 * 24)
+
+    // X axis scaleTime
+    var x = d3.scaleTime().domain(zoom_dates).range([0, width - 2*margin])
+
+
+    // Add the barchart with animations
+    d3.select(".case-plot")
+        .selectAll("rect")
+        .transition()
+        .duration(1000)
+        .attr("x", function(d, i) {
+            return x(new Date(d.Date_reported))
+        })
+        .attr("width", (width + 2*margin)/(num_data_points*2))
+        // .append("g").attr("clip-path", "url(#clip)" )
+
+    d3.select(".death-plot")
+        .selectAll("rect")
+        .transition()
+        .duration(1000)
+        .attr("x", function(d, i) {
+            return x(new Date(d.Date_reported)) + (width + 2*margin)/(num_data_points*2)
+        })
+        .attr("width", (width + 2*margin)/(num_data_points*2))
+        // .append("g").attr("clip-path", "url(#clip)" )
+    
+
+    // Horizontal Axis
+    d3.select("#graph").select(".hor-axis")
+        .transition().duration(800)
+        .call(d3.axisBottom(x))
+}
+
+
+
+
 
 
 
@@ -1508,7 +1622,7 @@ async function scene6() {
 
     d3.select("#description-note").remove()
 
-    d3.select(".description-container").append("p").attr("id", "description").text("In this section, you are free to click on any of the circles placed on top of specific countries. After clicking on a country, you'll be shown a bar chart of the country's new cases and new deaths per day.")
+    d3.select(".description-container").append("p").attr("id", "description").text("In this section, you are free to click on any of the circles placed on top of specific countries. After clicking on a country, you'll be shown a bar chart of the country's new cases and new deaths per day. Enter any dates that you will like a closer look at and click submit to zoom into the plot. Click reset whenever to zoom back out to the start.")
         .style("opacity", 0)
         .transition().duration(500)
         .style("opacity", 1)
@@ -1565,6 +1679,7 @@ function resetMap() {
     d3.select("#graph").remove()
     // d3.select(".visualization").append("svg").attr("id", "graph").style("opacity", 0)
     // show the map
+    d3.select(".axis-parameter").html("")
     createMap()
 }
 
@@ -1577,6 +1692,7 @@ function resetVis() {
     if (interaction == true) {
         d3.select("#map").remove()
         d3.select(".scene-changer").append("button").attr("id", "next-scene").text("Next").attr("onclick", "changePage(1)")
+        d3.select(".axis-parameter").html("")
         
     }
 
