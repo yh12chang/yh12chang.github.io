@@ -22,7 +22,7 @@ async function scene1() {
     d3.select("#graph").html("")
 
     if (interaction == true) {
-        d3.select(".visualization").append("svg").attr("id", "map")
+        d3.select(".visualization").append("svg").attr("id", "map").attr("height", 0)
         interaction = false
     }
 
@@ -896,14 +896,14 @@ function scene5() {
 
     textSlide.append("text")
         .style("font-weight", "bold")
-        .attr("x", width/2 - margin)
+        .attr("x", width/2 - margin - 10)
         .attr("y", margin)
         .attr("dy", "3em")
         .text("TIME FOR YOU TO EXPLORE!")
         .style("opacity", 0)
 
     textSlide.append("text")
-        .attr("x", margin*4.5)
+        .attr("x", margin*4.5 - 10)
         .attr("y", height*1/4)
         .attr("dy", "4em")
         .text("Next, you will now be provided with a world map showcasing")
@@ -917,35 +917,35 @@ function scene5() {
         .style("opacity", 0)
 
     textSlide.append("text")
-        .attr("x", margin*2)
+        .attr("x", margin*2-20)
         .attr("y", height*1/4)
         .attr("dy", "10em")
         .text("Each of the circles represent a country and the radius indicates the number of new COVID-19 cases ")
         .style("opacity", 0)
 
     textSlide.append("text")
-        .attr("x", margin*2 + 5)
+        .attr("x", margin*2-15)
         .attr("y", height*1/4)
         .attr("dy", "11.5em")
         .text("per country. Each circle are clickable and will display a bar chart (similar to what was seen before) ")
         .style("opacity", 0)
 
     textSlide.append("text")
-        .attr("x", margin*2+2)
+        .attr("x", margin*2-20)
         .attr("y", height*1/4)
         .attr("dy", "13em")
         .text("of the country's new cases and new deaths. You'll be able to explore which months since the start of ")
         .style("opacity", 0)
 
     textSlide.append("text")
-        .attr("x", margin*4.5 +35)
+        .attr("x", margin*5.5)
         .attr("y", height*1/4)
         .attr("dy", "14.5em")
         .text("the COVID-19 pandemic was effected the most.")
         .style("opacity", 0)
 
     textSlide.append("text")
-        .attr("x", margin*4)
+        .attr("x", margin*4-20)
         .attr("y", height*1/4)
         .attr("dy", "24.5em")
         .text("* Use the slider on the bar plot to look cloer into specific range of months")
@@ -1042,13 +1042,13 @@ async function interactablePlot(input ,index) {
         .style("opacity", 1);
 
     // Right CASES Y axis linearly scale barplots
-    const y = d3.scaleLinear().domain([0, new_max + new_max*0.1]).range([height - margin/2, 0])
+    const y = d3.scaleLinear().domain([0, new_max + new_max*0.1]).range([height - margin, 0])
 
     // Vertical Left Axis
     d3.select("#graph")
         .append("g")
         .attr("class", "vert-axis")
-        .attr("transform", "translate(" +2*margin+ ", " +margin+ ")")
+        .attr("transform", "translate(" +2*margin+ ", " +margin*3/2+ ")")
         .transition()
         .duration(1000)
         .call(d3.axisLeft(y).tickFormat(d3.format("~s")))
@@ -1095,12 +1095,12 @@ async function interactablePlot(input ,index) {
     console.log(death_max)
 
     // Right DEATHS Y axis linearly scale barplots
-    const y_death = d3.scaleLinear().domain([0, death_max + death_max*0.2]).range([height - margin/2, 0])
+    const y_death = d3.scaleLinear().domain([0, death_max + death_max*0.2]).range([height - margin, 0])
 
     // Vertical Right Axis
     d3.select("#graph")
         .append("g")
-        .attr("transform", "translate(" +(width)+ ", " +margin+ ")")
+        .attr("transform", "translate(" +(width)+ ", " +margin*3/2+ ")")
         .transition().duration(1000)
         .call(d3.axisRight(y_death).tickFormat(d3.format("~s")))
         .style("color", "rgb(29, 29, 29)");
@@ -1148,7 +1148,7 @@ async function interactablePlot(input ,index) {
         .attr("width", width + 2*margin)
         .attr("height", height + 2*margin)
         .append("g")
-        .attr("transform", "translate(" +2*margin+ ", " +margin+ ")")
+        .attr("transform", "translate(" +2*margin+ ", " +margin*3/2+ ")")
 
 
     // Create clipping Boundary
@@ -1188,7 +1188,7 @@ async function interactablePlot(input ,index) {
         })
         .attr("width", (width+2*margin)/new_cases.length)
         .attr("height", function(d,i) {
-            return height - margin/2 - y(d.New_cases)
+            return height - margin - y(d.New_cases)
         })
         .style("fill", country_color[index]);
 
@@ -1211,9 +1211,30 @@ async function interactablePlot(input ,index) {
         })
         .attr("width", (width + 2*margin)/(num_data_points*2))
         .attr("height", function(d,i) {
-            return height - margin/2 - y_death(d.New_deaths)
+            return height - margin - y_death(d.New_deaths)
         })
         .style("fill", "grey");
+
+    var canvas = document.createElement('canvas'),
+        context = canvas.getContext('2d')
+
+
+    function getWidth(text, fontSize, fontFace) {
+        context.font = fontSize + 'px ' + fontFace
+        return context.measureText(text).width
+    }
+
+    d3.select("#graph").append("text")
+        .attr("x", width-getWidth(input.Country, 20, 'Arial'))
+        .attr("y", margin)
+        .attr("font-size", 20)
+        // .attr("font-family", 'Arial')
+        .attr("font-weight", "bold")
+        .style("opacity", 0.3)
+        .text(input.Country)
+
+    console.log(getWidth(input.Country, 30, 'Arial'))
+        
 
 
     
@@ -1245,7 +1266,7 @@ async function interactablePlot(input ,index) {
     // }
 
     
-    d3.select(".visualization").append("svg").attr("id", "map")
+    d3.select(".visualization").append("svg").attr("id", "map").attr("height", 0)
 }
 
 
@@ -1434,7 +1455,7 @@ async function createMap() {
       d3.select(this).classed("selected", true);
 
 
-      tooltip.html("NAME: " + "<br/>" + d.Country + "<br/>" + "TOTAL CASES: " + "<br/>" + d.Cumulative_cases);
+      tooltip.html("NAME: " + "<br/>" + d.Country + "<br/>" + "TOTAL CASES: " + "<br/>" + parseInt(d.Cumulative_cases).toLocaleString("en-US"));
       
       tooltip.append("div").attr("class", "tooltip:after")
         .style("width", "0")
@@ -1453,7 +1474,8 @@ async function createMap() {
       var x = event.pageX - parseFloat(tooltip.style("width"))/2;
       var y = event.pageY-100;
 
-      tooltip.html("NAME: " + "<br/>" + d.Country + "<br/>" + "TOTAL CASES: " + "<br/>" + d.Cumulative_cases);
+      tooltip.html("NAME: " + "<br/>" + d.Country + "<br/>" + "TOTAL CASES: " + "<br/>" + parseInt(d.Cumulative_cases).toLocaleString("en-US"));
+
       tooltip.style("left", x + "px")
         .style("top",y + "px")
         .style("visibility", "visible");
