@@ -1622,7 +1622,7 @@ async function scene6() {
 
     d3.select("#description-note").remove()
 
-    d3.select(".description-container").append("p").attr("id", "description").text("In this section, you are free to click on any of the circles placed on top of specific countries. After clicking on a country, you'll be shown a bar chart of the country's new cases and new deaths per day. Enter any dates that you will like a closer look at and click 'Submit' to zoom into the plot. Click 'Reset' whenever to zoom back out to the start.")
+    d3.select(".description-container").append("p").attr("id", "description").text("In this section, you are free to click on any of the circles placed on top of specific countries. After clicking on a country, you'll be shown a bar chart of the country's new cases and new deaths per day. Enter any dates that you will like a closer look at and click 'Submit' to zoom into the plot. Click 'Reset' whenever to zoom back out to the overall view and click 'Map' to return to the world map.")
         .style("opacity", 0)
         .transition().duration(500)
         .style("opacity", 1)
