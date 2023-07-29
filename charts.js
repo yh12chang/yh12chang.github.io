@@ -6,15 +6,33 @@ var interaction = false
 // Function for First Scene
 async function scene1() {
 
+    d3.select("#description").remove()
+    d3.select("#description-note").remove()
+
+    d3.select(".description-container").append("p").attr("id", "description").text("In the early months of 2020, the world faced a global pandemic that would spread further than anyone could've imagined. The data visualization below is to help show when certain countries experienced the worst case of outbreak. To move through the narrative, click the 'Next' button.")
+        .style("opacity", 0)
+        .transition().duration(500)
+        .style("opacity", 1)
+    
+    d3.select(".description-container").append("p").attr("id", "description-note").text("* At any point, if you would like to restart the walk-through click the 'Restart' button.")
+        .style("opacity", 0)
+        .transition().duration(500)
+        .style("opacity", 1)
+
     d3.select("#graph").html("")
+
+    if (interaction == true) {
+        d3.select(".visualization").append("svg").attr("id", "map")
+        interaction = false
+    }
 
     // Country colors just in case
     const country_color = ["#d50000","#d6007d","#0a7287","#ff8400","#0a7334","#0c1ba1","#49b402","#6500ff","#3e2c0e","#c376e2"];
 
     // SVG parameters
     var margin = 50,
-        height = 400,
-        width = 700;
+        height = 450,
+        width = 750;
 
     // Initialize data variable from csv from github
     data = await d3.csv("https://yh12chang.github.io/USData.csv");
@@ -50,7 +68,7 @@ async function scene1() {
     const x = d3.scaleTime().domain(dates).range([0, width - margin])
 
     // Right Y axis linearly scale barplots
-    const y = d3.scaleLinear().domain([0, new_max + new_max*0.1]).range([height - margin/2, 0])
+    const y = d3.scaleLinear().domain([0, new_max + new_max*0.1]).range([height - margin, 0])
     
     // Cumulative cases data scale for left axis
     const y_cum = d3.scaleLinear().domain([0, cum_max + cum_max*0.1]).range([height, 0])
@@ -62,7 +80,7 @@ async function scene1() {
         // .attr("viewBox", "0 0 1000 725")
         // .attr("preserveAspectRatio", "xMinYMin meet")
         .append("g")
-        .attr("transform", "translate(" +2*margin+ ", " +margin+ ")")
+        .attr("transform", "translate(" +2*margin+ ", " +margin*3/2+ ")")
 
     var clip = svg.append("defs").append("clipPath")
         .attr("id", "clip")
@@ -93,7 +111,7 @@ async function scene1() {
         })
         .attr("width", (width+2*margin)/new_cases.length)
         .attr("height", function(d,i) {
-            return height - margin/2 - y(d.New_cases)
+            return height - margin - y(d.New_cases)
         })
         .style("fill", "rgb(24, 139, 135)");
 
@@ -157,7 +175,7 @@ async function scene1() {
     d3.select("#graph")
         .append("g")
         .attr("class", "vert-axis")
-        .attr("transform", "translate(" +2*margin+ ", " +margin+ ")")
+        .attr("transform", "translate(" +2*margin+ ", " +margin*3/2+ ")")
         .transition()
         .duration(1000)
         .call(d3.axisLeft(y).tickFormat(d3.format("~s")))
@@ -171,7 +189,7 @@ async function scene1() {
         .attr("id", "legend-cases")
         .append("circle")
             .attr("cx", 3*margin)
-            .attr("cy", margin+20)
+            .attr("cy", margin*7/4)
             .attr("r", 4)
             .style("fill", "rgb(24, 139, 135)")
             .style("opacity", 0)
@@ -182,13 +200,14 @@ async function scene1() {
         // Text
     d3.select("#legend-cases").append("text")
         .attr("x", 3*margin + 20)
-        .attr("y", margin+25)
+        .attr("y", margin*7/4 + 4)
         .text("Cases per Day")
         .style("opacity", 0)
         .style("font-size", 12)
         .transition()
         .duration(1000)
         .style("opacity", 1)
+
    
     // Annotations
 
@@ -250,8 +269,8 @@ async function scene1_5() {
 
     // SVG parameters
     var margin = 50,
-        height = 400,
-        width = 700;
+        height = 450,
+        width = 750;
 
     // Initialize data variable from csv from github
     data = await d3.csv("https://yh12chang.github.io/USData.csv");
@@ -375,8 +394,8 @@ async function scene2() {
 
     // SVG parameters
     var margin = 50,
-        height = 400,
-        width = 700;
+        height = 450,
+        width = 750;
 
     // Initialize data variable from csv from github
     data = await d3.csv("https://yh12chang.github.io/USData.csv");
@@ -521,8 +540,8 @@ async function scene3() {
 
     // SVG parameters
     var margin = 50,
-        height = 400,
-        width = 700;
+        height = 450,
+        width = 750;
 
     // Initialize data variable from csv from github
     data = await d3.csv("https://yh12chang.github.io/USData.csv");
@@ -562,14 +581,14 @@ async function scene3() {
     const x = d3.scaleTime().domain(dates).range([0, width - 2*margin])
 
     // Right Y axis linearly scale barplots
-    const y = d3.scaleLinear().domain([0, death_max + death_max*0.1]).range([height - margin/2, 0])
+    const y = d3.scaleLinear().domain([0, death_max + death_max*0.1]).range([height - margin, 0])
 
     // Base SVG to call when updating plot
     var svg = d3.select("#graph")
         .attr("width", width + 2*margin)
         .attr("height", height + 2*margin)
         .append("g")
-        .attr("transform", "translate(" +2*margin+ ", " +margin+ ")")
+        .attr("transform", "translate(" +2*margin+ ", " +margin*3/2+ ")")
 
     var clip = svg.append("defs").append("clipPath")
         .attr("id", "clip")
@@ -601,7 +620,7 @@ async function scene3() {
         })
         .attr("width", (width + 2*margin)/(num_data_points*2))
         .attr("height", function(d,i) {
-            return height - margin/2 - y(d.New_deaths)
+            return height - margin - y(d.New_deaths)
         })
         .style("fill", "rgb(255, 132, 0)");
 
@@ -614,7 +633,7 @@ async function scene3() {
     // Vertical Right Axis
     d3.select("#graph")
         .append("g")
-        .attr("transform", "translate(" +(width)+ ", " +margin+ ")")
+        .attr("transform", "translate(" +(width)+ ", " +margin*3/2+ ")")
         .transition().duration(1000)
         .call(d3.axisRight(y).tickFormat(d3.format("~s")))
         .style("color", "rgb(29, 29, 29)");
@@ -645,7 +664,7 @@ async function scene3() {
         .attr("id", "legend-deaths")
         .append("circle")
             .attr("cx", 3*margin)
-            .attr("cy", margin + 45)
+            .attr("cy", margin*2 + 9)
             .attr("r", 4)
             .style("fill", "rgb(255, 132, 0)")
             .style("opacity", 0)
@@ -656,7 +675,7 @@ async function scene3() {
         // Text
     d3.select("#legend-deaths").append("text")
         .attr("x", 3*margin + 20)
-        .attr("y", margin+50)
+        .attr("y", margin*2 + 13)
         .text("Deaths per Day")
         .style("opacity", 0)
         .style("font-size", 12)
@@ -738,19 +757,19 @@ async function scene4() {
     d3.select("#legend-cases")
         .transition()
         .duration(700)
-        .attr("transform", "translate("+0+", "+-25+")")
+        .attr("transform", "translate("+0+", "+-32+")")
         .style("opacity", 0.8)
 
     d3.select("#legend-deaths")
         .transition()
         .duration(700)
-        .attr("transform", "translate("+120+", "+-48+")")
+        .attr("transform", "translate("+120+", "+-54+")")
         .style("opacity",0.8)
 
     // SVG parameters
     var margin = 50,
-        height = 400,
-        width = 700;
+        height = 450,
+        width = 750;
 
     // Initialize data variable from csv from github
     data = await d3.csv("https://yh12chang.github.io/USData.csv");
@@ -832,7 +851,7 @@ async function scene4() {
         x: x(filter_dates[0]),
         y: margin/2,
         dy: margin/2 - 10,
-        dx: -margin
+        dx: -margin*3/2
     }];
 
     const makeAnnotations = d3.annotation()
@@ -854,8 +873,8 @@ function scene5() {
 
     // SVG parameters
     var margin = 50,
-        height = 400,
-        width = 700;
+        height = 450,
+        width = 750;
 
     d3.select("#graph")
         .selectAll("g")
@@ -879,37 +898,59 @@ function scene5() {
         .style("font-weight", "bold")
         .attr("x", width/2 - margin)
         .attr("y", margin)
-        .attr("dy", "0em")
+        .attr("dy", "3em")
         .text("TIME FOR YOU TO EXPLORE!")
         .style("opacity", 0)
 
     textSlide.append("text")
-        .attr("x", margin*3)
+        .attr("x", margin*4.5)
         .attr("y", height*1/4)
-        .attr("dy", "0em")
-        .text("Next, you will now be provided with a world map showcasing 10 countries")
+        .attr("dy", "4em")
+        .text("Next, you will now be provided with a world map showcasing")
         .style("opacity", 0)
 
     textSlide.append("text")
-        .attr("x", width/2 - margin + 10)
+        .attr("x", width/2 - margin*1.75)
         .attr("y", height*1/4)
-        .attr("dy", "1.5em")
-        .text("with the most COVID-19 cases.")
+        .attr("dy", "5.5em")
+        .text("10 countries with the most COVID-19 cases.")
         .style("opacity", 0)
 
     textSlide.append("text")
         .attr("x", margin*2)
         .attr("y", height*1/4)
-        .attr("dy", "4em")
-        .text("Each of the circles represent the number of new COVID-19 cases per country. Each circle are")
+        .attr("dy", "10em")
+        .text("Each of the circles represent a country and the radius indicates the number of new COVID-19 cases ")
         .style("opacity", 0)
 
     textSlide.append("text")
-        .attr("x", margin)
+        .attr("x", margin*2 + 5)
         .attr("y", height*1/4)
-        .attr("dy", "5.5em")
-        .text("clickable and will display the country's new cases and new deaths plot here.")
+        .attr("dy", "11.5em")
+        .text("per country. Each circle are clickable and will display a bar chart (similar to what was seen before) ")
         .style("opacity", 0)
+
+    textSlide.append("text")
+        .attr("x", margin*2+2)
+        .attr("y", height*1/4)
+        .attr("dy", "13em")
+        .text("of the country's new cases and new deaths. You'll be able to explore which months since the start of ")
+        .style("opacity", 0)
+
+    textSlide.append("text")
+        .attr("x", margin*4.5 +35)
+        .attr("y", height*1/4)
+        .attr("dy", "14.5em")
+        .text("the COVID-19 pandemic was effected the most.")
+        .style("opacity", 0)
+
+    textSlide.append("text")
+        .attr("x", margin*4)
+        .attr("y", height*1/4)
+        .attr("dy", "24.5em")
+        .text("* Use the slider on the bar plot to look cloer into specific range of months")
+        .style("opacity", 0)
+        
 
     d3.select("#closing-text")
         .selectAll("text")
@@ -940,8 +981,8 @@ async function interactablePlot(input ,index) {
 
     // SVG parameters
     var margin = 50,
-        height = 400,
-        width = 700;
+        height = 450,
+        width = 750;
 
     // Initialize data variable from csv from github
     // link = "https://yh12chang.github.io/" + input.Country_code + "Data.csv"
@@ -1112,21 +1153,21 @@ async function interactablePlot(input ,index) {
 
     // Create clipping Boundary
     var clip = svg.append("defs").append("clipPath")
-        .attr("id", "clip")
+        .attr("id", "mask")
         .append("rect")
-        .attr("width", width-2*margin)
+        .attr("width", width - 2*margin)
         .attr("height", height)
         .attr("x", 0)
         .attr("y", 0)
 
-    // var brush = d3.brushX()
-    //     .extent( [0, 0], [width, height])
-    //     .on("end", updateChart)
+    var brush = d3.brush()
+        .extent( [0, 0], [width, height])
+        // .on("end", updateChart)
 
 
     // Add the path for clip boundary
     var bar = svg.append("g")
-        .attr("clip-path", "url(#clip)")
+        .attr("clip-path", "url(#mask)")
 
     // Add the CASES barchart with animations
     bar.attr("class", "case-plot")
@@ -1174,10 +1215,10 @@ async function interactablePlot(input ,index) {
         })
         .style("fill", "grey");
 
+
+    
     // // Add brushing to the plot
-    // bar.append("g")
-    //     .attr("class", "brush")
-    //     .call(brush)
+    
 
     // // Function that set idletimeout to null
     // var idleTimeout
@@ -1213,7 +1254,11 @@ async function interactablePlot(input ,index) {
 
 // Function to create the map
 async function createMap() {
+
     d3.select("#map").html("")
+
+    d3.select(".visualization").append("svg").attr("id", "graph").attr("opacity", 0).attr("height", 0)
+
 
     const heat_color = ["#ef3c18","#ef6a18","#ffa600","#ff7c43","#f95d6a","#d45087","#a05195","#665191","#2f4b7c","#003f5c"];
     const country_color = ["#d50000","#d6007d","#0a7287","#ff8400","#0a7334","#0c1ba1","#49b402","#6500ff","#3e2c0e","#c376e2"];
@@ -1250,8 +1295,8 @@ async function createMap() {
         .style("padding", "10px")
 
     d3.select(".chart-container")
-        .style("padding-top", "50px")
-        .style("padding-bottom", "50px")
+        .style("padding-top", "10px")
+        .style("padding-bottom", "10px")
         .transition()
         .duration(800)
         .style("background-color", "#d5ecf0")
@@ -1363,7 +1408,7 @@ async function createMap() {
 
 
     // Tooltip
-    var tooltip = d3.select(".map-viz")
+    var tooltip = d3.select(".visualization")
       .append("div")
       .attr("class", "tooltip")
       .style("position", "absolute")
@@ -1432,13 +1477,24 @@ async function createMap() {
 
 
 
-
-
-
 // Scene with Map Interaction charts and 
 async function scene6() {
 
     interaction = true
+
+    d3.select("#description").remove()
+
+    d3.select("#description-note").remove()
+
+    d3.select(".description-container").append("p").attr("id", "description").text("In this section, you are free to click on any of the circles placed on top of specific countries. After clicking on a country, you'll be shown a bar chart of the country's new cases and new deaths per day.")
+        .style("opacity", 0)
+        .transition().duration(500)
+        .style("opacity", 1)
+    
+    d3.select(".description-container").append("p").attr("id", "description-note").text("* At any point, if you would like to restart the walk-through click the 'Restart' button.")
+        .style("opacity", 0)
+        .transition().duration(500)
+        .style("opacity", 1)
 
     // d3.select("#graph").selectAll("text").transition().duration(300).attr("transform", "translate("+50+", "+0+")").style("opacity", 0)
 
@@ -1446,9 +1502,16 @@ async function scene6() {
 
     d3.select("#graph").remove()
 
-    d3.select(".visualization").append("svg").attr("id", "graph").attr("opacity", 0)
+    d3.select("#next-scene").remove()
     
     createMap()
+
+    if (d3.select("#map-reset")._groups[0][0] == null) {
+        
+        d3.select(".scene-changer").append("button").attr("id", "map-reset").text("Map").attr("onclick", "resetMap()")
+    }
+
+    
 }
 
 
@@ -1474,17 +1537,50 @@ function changePage(direction) {
     scenes[i]()
 }
 
-function resetVis() {
-    if (interaction == true) {
-        // remove plot
-        d3.select("#graph").remove()
-        d3.select(".visualization").append("svg").attr("id", "graph").style("opacity", 0)
-        // show the map
-        createMap()
-    }
-    else {
-        // display the direction portion of the martini structure
-        scene1()
-        i = 0
-    }
+
+function resetMap() {
+    // remove plot
+    d3.select("#graph").remove()
+    // d3.select(".visualization").append("svg").attr("id", "graph").style("opacity", 0)
+    // show the map
+    createMap()
 }
+
+
+function resetVis() {
+    // Remove Map SVG
+    d3.select(".chart-container").selectAll("g").transition().duration(600).style("opacity", 0)
+    d3.select(".chart-container").style("padding", 0).style("padding", 0).style("background-color", "white")
+
+    if (interaction == true) {
+        d3.select("#map").remove()
+        d3.select(".scene-changer").append("button").attr("id", "next-scene").text("Next").attr("onclick", "changePage(1)")
+        
+    }
+
+    d3.select("#graph").transition().duration(1000).style("opacity", 1)
+
+    if (d3.select("#map-reset") != null) {
+        d3.select("#map-reset").remove()
+    }
+    
+// display the direction portion of the martini structure
+    scene1()
+    i = 0
+}
+
+
+// function resetVis() {
+//     if (interaction == true) {
+//         // remove plot
+//         d3.select("#graph").remove()
+//         // d3.select(".visualization").append("svg").attr("id", "graph").style("opacity", 0)
+//         // show the map
+//         createMap()
+//     }
+//     else {
+//         // display the direction portion of the martini structure
+//         scene1()
+//         i = 0
+//     }
+// }

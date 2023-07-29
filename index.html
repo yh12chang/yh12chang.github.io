@@ -14,7 +14,7 @@
     <!-- <script src="map.js"></script> -->
 
     <!-- Script running for contents -->
-    <script src="charts.js"></script>
+    
 
 </head>  
 
@@ -28,10 +28,11 @@
 
         <div class="header-container">
             <div class="title">
-                <h1 id="main-title">Add Title Here</h1>
+                <h1 id="main-title">COVID-19 Global Pandemic</h1>
             </div>
             <div class="description-container">
-                <p id="description">In the early months of 2020, the world faced an outbreak of a disease that would spread further than anyone could've imagined. The data visualization below is to help show when certain countries experienced the worst case of outbreak. </p>
+                <!-- <p id="description">In the early months of 2020, the world faced a global pandemic that would spread further than anyone could've imagined. The data visualization below is to help show when certain countries experienced the worst case of outbreak. To move through the narrative, click the "Next" button.</p>
+                <p id="description-note">* At any point, if you would like to restart the walk-through click the "Restart" button.</p> -->
             </div>
         </div>
         
@@ -43,8 +44,12 @@
                 <!-- Charts for Scenes -->
 
                 <div class="scene-changer">
-                    <button onclick="changePage(1)"> Next </button>
-                    <button onclick="resetVis()"> Reset </button>
+                    <button id="tutorial-reset" onclick="resetVis()"> Restart </button>
+                    <button id="next-scene" onclick="changePage(1)"> Next </button>
+                </div>
+
+                <div class="map-button">
+
                 </div>
 
                 <div class="chart-container">
@@ -55,11 +60,13 @@
                     </div>
                 </div>
             </section>
+
+            <script src="charts.js"></script>
             
 
 
             <!-- World Map for interactive portion of Martini Glass -->
-            <section class="map-section">
+            <!-- <section class="map-section">
                 <div class="map-container">
                     <div class="map-legend">
     
@@ -70,15 +77,15 @@
                         
                     </div>
                 </div>
-            </section>
+            </section> -->
             
             
         </div>
 
         <!-- Footer Container -->
-        <div class="footer">
+        <!-- <div class="footer">
             <p id="footer-info"> YongHun Chang CS 416 Data Visualization Narrative Visualization Project</p>
-        </div>
+        </div> -->
 
     </div>
     <!-- <script>d3.selectAll('.description-container').append("p").text('hello world')</script> -->
